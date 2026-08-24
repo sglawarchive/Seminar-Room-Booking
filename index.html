@@ -241,32 +241,46 @@
     }
 
     // JSONP 방식으로 구글 시트 데이터 가져오기
-    function fetchBookings() {
-      if (!SCRIPT_URL) return;
-      
-      document.getElementById('loadingStatus').style.display = 'block';
+    flet retryCount = 0;
+const MAX_RETRY = 3;
 
-      window.handleGoogleSheetData = function(data) {
-        bookings = data || [];
-        renderTimetable();
-        document.getElementById('loadingStatus').style.display = 'none';
-        
-        const oldScript = document.getElementById('jsonpScript');
-        if (oldScript) oldScript.remove();
-      };
+function fetchBookings() {
+  if (!SCRIPT_URL) return;
+  
+  document.getElementById('loadingStatus').style.display = 'block';
 
-      const oldScript = document.getElementById('jsonpScript');
-      if (oldScript) oldScript.remove();
+  window.handleGoogleSheetData = function(data) {
+    retryCount = 0; // 성공 시 재시도 횟수 초기화
+    bookings = data || [];
+    renderTimetable();
+    document.getElementById('loadingStatus').style.display = 'none';
+    
+    const oldScript = document.getElementById('jsonpScript');
+    if (oldScript) oldScript.remove();
+  };
 
-      const script = document.createElement('script');
-      script.id = 'jsonpScript';
-      script.src = SCRIPT_URL + '?callback=handleGoogleSheetData&t=' + new Date().getTime();
-      script.onerror = function() {
-        alert('구글 시트 데이터를 불러오는 데 실패했습니다.');
-        document.getElementById('loadingStatus').style.display = 'none';
-      };
-      document.body.appendChild(script);
+  const oldScript = document.getElementById('jsonpScript');
+  if (oldScript) oldScript.remove();
+
+  const script = document.createElement('script');
+  script.id = 'jsonpScript';
+  // 캐시 방지를 위한 타임스탬프와 난수 추가
+  script.src = SCRIPT_URL + '?callback=handleGoogleSheetData&t=' + new Date().getTime() + '&r=' + Math.random();
+  
+  script.onerror = function() {
+    if (retryCount < MAX_RETRY) {
+      retryCount++;
+      console.warn(`구글 시트 데이터 불러오기 재시도 (${retryCount}/${MAX_RETRY})...`);
+      setTimeout(fetchBookings, 1000); // 1초 후 재시도
+    } else {
+      alert('구글 시트 데이터를 불러오는 데 실패했습니다. 페이지를 새로고침 해주세요.');
+      document.getElementById('loadingStatus').style.display = 'none';
+      retryCount = 0;
     }
+  };
+  
+  document.body.appendChild(script);
+}
 
     // 💡 30분 단위 시간표 렌더링
     function renderTimetable() {

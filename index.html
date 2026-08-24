@@ -119,7 +119,7 @@
   </div>
 
   <script>
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbymnCmtGfX5mhUsnPecEh0Et_AO9AnTdd6XnTP9rxtxwX6XrI5GlOmgEfczp88CN5R4Fw/exec";
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzaCPcNqS7fOTUn-G5UqWOLXP5q2jOudpxblcR8pZ_QrQaRSOOkJTb6yE6GbMXc6rhJZA/exec";
 
     let bookings = [];
 
@@ -230,25 +230,24 @@
       return String(roomStr || '').replace(/\s+/g, '').toUpperCase();
     }
 
-    // JSONP 방식으로 구글 시트 데이터 가져오기
-    flet retryCount = 0;
-const MAX_RETRY = 3;
-
-function fetchBookings() {
+    // 구글 시트 데이터 가져오기
+async function fetchBookings() {
   if (!SCRIPT_URL) return;
-  
   document.getElementById('loadingStatus').style.display = 'block';
 
-  window.handleGoogleSheetData = function(data) {
-    retryCount = 0; // 성공 시 재시도 횟수 초기화
+  try {
+    const res = await fetch(SCRIPT_URL);
+    const data = await res.json();
     bookings = data || [];
     renderTimetable();
+  } catch (err) {
+    console.error(err);
+    alert('구글 시트 데이터를 불러오는 데 실패했습니다.');
+  } finally {
     document.getElementById('loadingStatus').style.display = 'none';
+  }
+}
     
-    const oldScript = document.getElementById('jsonpScript');
-    if (oldScript) oldScript.remove();
-  };
-
   const oldScript = document.getElementById('jsonpScript');
   if (oldScript) oldScript.remove();
 

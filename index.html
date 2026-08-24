@@ -214,17 +214,19 @@
 
     // 날짜 파싱 함수
     function parseDate(dateStr) {
-      if (!dateStr) return null;
-      const nums = String(dateStr).replace(/[^0-9]/g, ' ').trim().split(/\s+/);
-      if (nums.length >= 3) {
-        const y = parseInt(nums[0], 10);
-        const m = parseInt(nums[1], 10) - 1;
-        const d = parseInt(nums[2], 10);
-        return new Date(y, m, d);
-      }
-      return null;
-    }
-
+  if (!dateStr) return null;
+  
+  // "2026-03-24" 또는 "2026. 3. 24" 형태에서 숫자만 추출
+  const nums = String(dateStr).match(/\d+/g);
+  if (nums && nums.length >= 3) {
+    const y = parseInt(nums[0], 10);
+    const m = parseInt(nums[1], 10) - 1; // Month는 0부터 시작
+    const d = parseInt(nums[2], 10);
+    return new Date(y, m, d);
+  }
+  return null;
+}
+    
     // 세미나실 이름 정제 함수
     function cleanRoomName(roomStr) {
       return String(roomStr || '').replace(/\s+/g, '').toUpperCase();

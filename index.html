@@ -23,18 +23,11 @@
     .booked-cell { background-color: #ebf8ff; border-left: 3px solid #3182ce !important; color: #2c5282; font-size: 11px; }
     .loading-overlay { text-align: center; color: #4a5568; font-weight: bold; margin: 10px 0; }
     .notice-box {background-color: #fff8e6; border-left: 4px solid #ffb100; padding: 12px 16px; margin-top: 15px; border-radius: 4px;}
-    .notice-box h4 {
-          margin: 0 0 6px 0;
-          font-size: 14px;
-          color: #b76e00;
-          display: flex;
-          align-items: center;
-        }
-      
-        .notice-box li {
-          font-size: 13px;
-          margin-bottom: 2px;
-        }
+    .notice-box1 {background-color: #fff5f5; border-left: 4px solid #e53e3e; padding: 12px 16px; margin-top: 15px; border-radius: 4px;}
+    .notice-box h4 { margin: 0 0 6px 0; font-size: 14px;  color: #b76e00;  display: flex; align-items: center;}
+    .notice-box1 h5 { margin: 0 0 6px 0; font-size: 14px;  color: #c53030;  display: flex; align-items: center;}
+    .notice-box li {font-size: 13px; margin-bottom: 2px;}
+    .notice-box1 li {font-size: 13px; margin-bottom: 2px;}
   </style>
 </head>
 <body>
@@ -45,12 +38,16 @@
     <form id="bookingForm">
       <div class="form-grid">
         <div class="form-group">
-          <label>이름</label>
+          <label>신청자 이름</label>
           <input type="text" id="userName" required placeholder="홍길동">
         </div>
         <div class="form-group">
-          <label>학번</label>
+          <label>신청자 학번</label>
           <input type="text" id="studentId" required placeholder="L17000">
+        </div>
+        <div class="form-group">
+          <label>사용 인원 (명)</label>
+          <input type="number" id="headCount" min="2" max="20" required placeholder="인원수 입력">
         </div>
         <div class="form-group">
           <label>세미나실 선택</label>
@@ -81,22 +78,37 @@
           <label>종료 시간 (08:30 ~ 22:00)</label>
           <select id="endTime" required></select>
         </div>
+        <div class="form-group full-width">
+          <label>사용자 이름 및 학번 <span style="color: red;">*</span></label>
+          <input type="text" id="participants" required placeholder="(예: L17001 홍길동, L17002 김철수)">
+        </div>
       </div>
       <button type="submit" class="btn-submit" id="submitBtn">예약 신청하기</button>
     </form>
   </div>
 
   <div class="notice-box">
-  <h4>⚠️ 예약 시 주의사항</h4>
+  <h4>⚠️ 예약 안내사항</h4>
   <ul>
-    <li>교내 행사, 교수님 면담 등 필요한 경우 행정실에 예약 우선권이 부여됨을 참고 부탁드립니다.</li>
     <li>하루 최대 3시간까지만 사용 가능합니다.</li>
     <li>예약은 매주 월요일 0시에 초기화됩니다.</li>
-    <li>예약 수정이나 취소를 원하시는 경우 회장단이나 집행부에게 연락바랍니다.</li>
+    <li>최소 사용인원은 3명입니다.(학번, 이름 기입 필수)</li>
+    <li>예약 수정이나 취소를 원하시는 경우 회장단이나 집행부에게 연락바랍니다.(* 10월 이후에는 행정팀(lawschool@sogang.ac.kr)으로 권한 이전 예정)</li>
   </ul>
+   <p style="font-size: 13px;">※ 교내 행사, 교수님 면담 등 행정업무 발생시 예약이 취소될 수 있습니다.</p>
    <p style="font-size: 13px;">※ 세미나실 이용 완료 후에는 다음 사람이 사용할 수 있도록 개인 짐을 모두 가져가주시기 바랍니다.</p>
 </div>
 
+    <div class="notice-box1">
+  <h5>⚠️ 유의사항</h5>
+  <ul>
+    <li>스터디 목적 이외의 예약이 필요한 경우 행정팀(X223)에서 오프라인으로 시설물 사용을 신청하기 바랍니다.</li>
+    <li>사용인원 전언의 학번을 입력하여야 하며 다른 학생의 동의를 받지 않고 학번정보를 허위로 입력하는 경우 개인정보 도용에 해당하므로 유의하시기 바랍니다.</li>
+    <li>법학전문대학원 재학생 이외의 외부단체(외부인) 사용은 불가합니다.</li>
+  </ul>
+   <p style="font-size: 13px;">※ 온라인 예약시스템은 2026년 2학기 시범운영 중입니다.</p>
+ </div>
+  
   <div class="filter-container">
     <h3>📅 주간 실시간 예약 현황</h3>
     <div>
@@ -129,8 +141,8 @@
   </div>
 
   <script>
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzkNqlQ-k7RxGTPkm11lLYzv_tsdFD3l6uzyUSoOvcBVRG8So-kABC2fs726n5O8nnN8A/exec";
-//    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzKJAD2qUO8HGe9MGB-omPm6wz_0inSP19gESc0R_Tt10cCu_nZQLHog5lNang19aG_Lw/exec";    
+//    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzkNqlQ-k7RxGTPkm11lLYzv_tsdFD3l6uzyUSoOvcBVRG8So-kABC2fs726n5O8nnN8A/exec";
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyfdhzMpdmJIj41WINY96AcSsNAhqWDPvNsWClWK1DykV0HLejkD2LD7v7A5VTXKdqMMQ/exec";    
 
     let bookings = [];
 
@@ -261,8 +273,8 @@
 
       const script = document.createElement('script');
       script.id = 'jsonpScript';
-//      script.src = SCRIPT_URL + '?callback=handleGoogleSheetData&t=' + new Date().getTime() + '&nocache=' + Math.random().toString(36).substring(7);
-      script.src = SCRIPT_URL + '?callback=handleGoogleSheetData&t=' + new Date().getTime();
+      script.src = SCRIPT_URL + '?callback=handleGoogleSheetData&t=' + new Date().getTime() + '&nocache=' + Math.random().toString(36).substring(7);
+   //   script.src = SCRIPT_URL + '?callback=handleGoogleSheetData&t=' + new Date().getTime();
       script.onerror = function() {
         alert('구글 시트 데이터를 불러오는 데 실패했습니다.');
         document.getElementById('loadingStatus').style.display = 'none';
@@ -289,12 +301,14 @@
             const endM = timeToMinutes(b.endTime);
 
             // 30분 단위로 순회하면서 해당하는 셀을 찾아 채움
-            for (let m = startM; m < endM; m += 30) {
+          for (let m = startM; m < endM; m += 30) {
               const cellKey = timeToCellKey(minutesToTime(m));
               const cell = document.getElementById(`cell-${day}-${cellKey}`);
               if (cell) {
                 cell.className = 'booked-cell';
-                cell.innerHTML = `<strong>${b.name}</strong><br>(${b.studentId})`;
+                // 학번 대신 사용 인원수(명)와 대표자 이름 표시
+                const headCountDisplay = b.headCount ? `${b.headCount}명` : '';
+                cell.innerHTML = `<strong>${b.name} (${headCountDisplay})</strong>`;
               }
             }
           }
@@ -306,10 +320,12 @@
     document.getElementById('bookingForm').addEventListener('submit', async function(e) {
       e.preventDefault();
 
-      const name = document.getElementById('userName').value;
+     const name = document.getElementById('userName').value;
       const studentId = document.getElementById('studentId').value;
+      const headCount = document.getElementById('headCount').value;
+      const participants = document.getElementById('participants').value;
       const room = document.getElementById('roomSelect').value;
-      const dayValue = parseInt(document.getElementById('bookingDay').value, 10); // 1(월) ~ 5(금)
+      const dayValue = parseInt(document.getElementById('bookingDay').value, 10);
         
         // 선택한 요일에 해당하는 이번 주 실제 YYYY-MM-DD 날짜 구하기
         const today = new Date();
@@ -386,6 +402,8 @@
       const formData = new FormData();
       formData.append('name', name);
       formData.append('studentId', studentId);
+      formData.append('headCount', headCount);
+      formData.append('participants', participants);
       formData.append('room', room);
       formData.append('date', dateStr);
       formData.append('startTime', startTime);
